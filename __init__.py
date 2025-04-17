@@ -41,44 +41,49 @@ def mongraphique():
 def monhisto():
   return render_template("histogramme.html")
 
-@app.route("/commits/")
-def commits_chart():
-    return render_template("commits.html")
+from flask import Flask, jsonify, render_template
+import requests
+from datetime import datetime
+from collections import Counter
 
-@app.route("/api/commits/")
-def get_commits_data():
-    url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
+app = Flask(__name__)
+
+# Route pour afficher le graphique des commits
+@app.route('/commits/')
+def commits():
+    # Récupérer les commits depuis l'API GitHub
+    url = 'https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits'
     response = requests.get(url)
-    
-    # Vérification de la réponse de l'API
-    if response.status_code == 200:
-        print("API Call Success")
-    else:
-        print("API Call Failed, Status Code:", response.status_code)
-    
-    data = response.json()
+    commits_data = response.json()
 
-    if not data:
-        print("Aucun commit trouvé dans la réponse.")
-    else:
-        print(f"Nombre de commits récupérés : {len(data)}")
+    # Extraire les minutes des commits
+    minutes = []
+    for commit in commits_data:
+        commit_date = commit['commit']['author']['date']
+        commit_datetime = datetime.strptime(commit_date, '%Y-%m-%dT%H:%M:%SZ')
+        minute = commit_datetime.strftime('%Y-%m-%d %H:%M')  # Extrait l'année, mois, jour, heure et minute
+        minutes.append(minute)
 
-    minutes_list = []
-    for commit in data:
-        try:
-            # Extraction de la date de commit
-            date_str = commit["commit"]["author"]["date"]
-            dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
-            minutes_list.append(dt.minute)
-        except KeyError as e:
-            print("Clé manquante dans un commit", e)
+    # Compter les commits par minute
+    commit_counts = Counter(minutes)
 
-    count_by_minute = dict(Counter(minutes_list))
-    formatted_data = [{"minute": m, "count": count_by_minute[m]} for m in sorted(count_by_minute)]
+    # Organiser les données pour le graphique
+    data = []
+    for minute, count in commit_counts.items():
+        data.append([minute, count])
 
-    print(f"Data formatée pour le graphique: {formatted_data}")
+    return render_template('commits.html', data=data)
 
-    return jsonify(formatted_data)
+# Route pour extraire les minutes (optionnel, utilisé pour tester la date)
+@app.route('/extract-minutes/<date_string>')
+def extract_minutes(date_string):
+    date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+    minutes = date_object.minute
+    return jsonify({'minutes': minutes})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
 
                                                                                                                                   
