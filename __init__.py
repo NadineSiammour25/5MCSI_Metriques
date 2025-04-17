@@ -45,32 +45,30 @@ def commits():
     url = 'https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits'
     
     try:
-        # Effectuer la requête à l'API GitHub
         response = urlopen(url)
         commits_data = json.loads(response.read().decode('utf-8'))
 
-        # Extraire uniquement les heures et minutes des commits
         minutes = []
         for commit in commits_data:
             try:
                 commit_date = commit['commit']['author']['date']
                 commit_datetime = datetime.strptime(commit_date, '%Y-%m-%dT%H:%M:%SZ')
-                minute = commit_datetime.strftime('%H:%M')  # <-- Ici on garde uniquement l'heure et les minutes
+                minute = commit_datetime.strftime('%H:%M')
                 minutes.append(minute)
-            except KeyError as e:
-                print(f"Clé manquante dans le commit: {e}")
-                continue  # Ignorer les commits problématiques
+            except KeyError:
+                continue
 
-        # Compter les commits par minute
         commit_counts = Counter(minutes)
 
-        # Organiser les données pour le graphique
-        data = [[minute, count] for minute, count in commit_counts.items()]
+        # Tri les minutes dans l'ordre chronologique
+        sorted_data = sorted(commit_counts.items())  
+        data = [[minute, count] for minute, count in sorted_data]
 
         return render_template('commits.html', data=data)
     
     except Exception as e:
-        return jsonify({'error': f'Erreur lors de la récupération des données de l\'API GitHub : {str(e)}'}), 502
+        return jsonify({'error': f'Erreur : {str(e)}'}), 502
+
 
 
 
