@@ -29,4 +29,80 @@
     h2 {
       font-weight: 500;
       margin-bottom: 30px;
-      text
+      text-align: center;
+      color: #f4f1ee;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      margin-top: 20px;
+      font-weight: 500;
+      color: #d1cfc9;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      background-color: #2b2b2b;
+      color: #f4f1ee;
+      border: 1px solid #3a3a3a;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border 0.3s ease;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #b0aaa5;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #bfae9f;
+    }
+
+    button {
+      margin-top: 30px;
+      width: 100%;
+      background-color: #bfae9f;
+      color: #121212;
+      padding: 14px;
+      font-weight: bold;
+      font-size: 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #a99989;
+    }
+
+    @media (max-width: 600px) {
+      .form-container {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Contactez notre équipe</h2>
+    <form>
+      <label for="nom">Nom</label>
+      <input type="text" id="nom" name="nom" placeholder="Votre nom">
+
+      <label for="prenom">Prénom</label>
+      <input type="text" id="prenom" name="prenom" placeholder="Votre prénom">
+
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" placeholder="Votre message..."></textarea>
+
+      <button type="submit">Envoyer</button>
+    </form>
+  </div>
+</body>
+</html>
