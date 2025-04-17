@@ -40,8 +40,6 @@ def mongraphique():
 def monhisto():
   return render_template("histogramme.html")
 
-
-
 @app.route("/commits/")
 def commits_chart():
     return render_template("commits.html")
@@ -50,19 +48,35 @@ def commits_chart():
 def get_commits_data():
     url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
     response = requests.get(url)
+    
+    # Vérification de la réponse de l'API
+    if response.status_code == 200:
+        print("API Call Success")
+    else:
+        print("API Call Failed, Status Code:", response.status_code)
+    
     data = response.json()
+
+    if not data:
+        print("Aucun commit trouvé dans la réponse.")
+    else:
+        print(f"Nombre de commits récupérés : {len(data)}")
 
     minutes_list = []
     for commit in data:
         try:
+            # Extraction de la date de commit
             date_str = commit["commit"]["author"]["date"]
             dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
             minutes_list.append(dt.minute)
-        except:
-            continue
+        except KeyError as e:
+            print("Clé manquante dans un commit", e)
 
     count_by_minute = dict(Counter(minutes_list))
     formatted_data = [{"minute": m, "count": count_by_minute[m]} for m in sorted(count_by_minute)]
+
+    print(f"Data formatée pour le graphique: {formatted_data}")
+
     return jsonify(formatted_data)
 
 
