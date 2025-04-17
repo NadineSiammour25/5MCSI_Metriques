@@ -7,6 +7,11 @@ import sqlite3
                                                                                                                                        
 app = Flask(__name__)
 
+@app.route('/')#helloPage
+def hello_world():
+    return render_template('hello.html') #Commit1
+  
+
 @app.route("/contact/") #Formulaire de contact
 def MaPremiereAPI():
     return render_template("contact.html")
@@ -35,14 +40,13 @@ def mongraphique():
 def monhisto():
   return render_template("histogramme.html")
 
-
-                                                                                                                                       
-@app.route('/')#helloPage
-def hello_world():
-    return render_template('hello.html') #Commit1
+@app.route("/commits/")
+def mescommits():
+  return render_template("commits.html")
 
 
-  
+                                                                                                                                  
+
 if __name__ == "__main__":
   app.run(debug=True)
 
