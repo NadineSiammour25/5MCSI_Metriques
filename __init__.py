@@ -5,9 +5,6 @@ from datetime import datetime
 from collections import Counter
 from urllib.request import urlopen
 import sqlite3
-import pytz
-
-
                                                                                                                                        
 app = Flask(__name__)
 
@@ -44,8 +41,9 @@ def mongraphique():
 def monhisto():
   return render_template("histogramme.html")
 
-# Configuration de votre fuseau horaire local (par exemple Paris)
-local_tz = pytz.timezone('Europe/Paris')
+# Définir le décalage horaire pour Paris (UTC+2 pendant l'heure d'été)
+# Vous pouvez ajuster le décalage si nécessaire, par exemple en UTC+1 en hiver
+UTC_OFFSET = timedelta(hours=2)  # Décalage pour l'heure d'été (Paris)
 
 @app.route('/commits/')
 def commits():
@@ -62,9 +60,9 @@ def commits():
         commit_date = commit['commit']['author']['date']  # La date du commit
         commit_time_utc = datetime.strptime(commit_date, "%Y-%m-%dT%H:%M:%SZ")  # Date en UTC
         
-        # Convertir UTC en temps local
-        commit_time_local = commit_time_utc.replace(tzinfo=pytz.utc).astimezone(local_tz)
-
+        # Convertir UTC en temps local en ajoutant le décalage horaire
+        commit_time_local = commit_time_utc + UTC_OFFSET  # Appliquer le décalage horaire
+        
         # Extraire la minute du commit
         commit_minute = commit_time_local.strftime('%Y-%m-%d %H:%M')  # Format "2025-04-17 14:35"
         
@@ -80,6 +78,7 @@ def commits():
         data.append([minute, count])
     
     return jsonify(data)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
