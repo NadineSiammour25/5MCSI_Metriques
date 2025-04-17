@@ -73,7 +73,7 @@ def commits():
         return render_template('commits.html', data=data)
     
     except Exception as e:
-        # En cas d'erreur réseau ou autre exception
+        # En cas d'erreur réseau ou autre exceptions
         return jsonify({'error': f'Erreur lors de la récupération des données de l\'API GitHub : {str(e)}'}), 502
 
 
