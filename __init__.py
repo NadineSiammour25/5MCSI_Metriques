@@ -41,12 +41,6 @@ def mongraphique():
 def monhisto():
   return render_template("histogramme.html")
 
-from flask import Flask, jsonify, render_template
-import requests
-from datetime import datetime
-from collections import Counter
-
-app = Flask(__name__)
 
 # Route pour afficher le graphique des commits
 @app.route('/commits/')
