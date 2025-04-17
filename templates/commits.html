@@ -18,10 +18,9 @@
         data.addColumn('number', 'Nombre de Commits');
 
         // Insérer les données passées depuis Flask dans le graphique
-        var commitsData = {{ data | tojson }};
-        commitsData.forEach(function(entry) {
-          data.addRow([entry[0], entry[1]]);
-        });
+        {% for row in data %}
+          data.addRow(['{{ row[0] }}', {{ row[1] }}]);
+        {% endfor %}
 
         // Configurer le graphique
         var options = {
@@ -36,7 +35,6 @@
           }
         };
 
-        // Créer et afficher le graphique
         var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
         chart.draw(data, options);
       }
