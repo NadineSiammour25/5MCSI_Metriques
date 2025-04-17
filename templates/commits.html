@@ -1,13 +1,65 @@
-<html>
+<!DOCTYPE html>
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <title>Graphique des Commits</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f7f6;
+        color: #333;
+      }
+      header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px;
+        text-align: center;
+      }
+      .container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      h2 {
+        font-size: 24px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      #chart_div {
+        width: 100%;
+        height: 500px;
+        margin-top: 20px;
+      }
+      footer {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        margin-top: 40px;
+      }
+    </style>
   </head>
   <body>
-    <h2>Graphique des Commits par Minute</h2>
-    <div id="chart_div"></div>
-    <script>
+    <header>
+      <h1>Suivi de l'Activité des Commits</h1>
+    </header>
+
+    <div class="container">
+      <h2>Graphique des Commits par Minute</h2>
+      <div id="chart_div"></div>
+    </div>
+
+    <footer>
+      <p>Projet GitHub - Analyse de l'activité des commits</p>
+    </footer>
+
+    <script type="text/javascript">
       google.charts.load('current', { packages: ['corechart', 'bar'] });
       google.charts.setOnLoadCallback(drawChart);
 
@@ -22,19 +74,32 @@
           data.addRow(['{{ row[0] }}', {{ row[1] }}]);
         {% endfor %}
 
-        // Configurer le graphique
+        // Configurer le graphique avec plus d'options
         var options = {
           title: 'Nombre de Commits par Minute',
-          chartArea: { width: '50%' },
+          chartArea: { width: '75%', height: '70%' },
           hAxis: {
             title: 'Minute',
-            minValue: 0
+            minValue: 0,
+            textStyle: { color: '#4CAF50', fontSize: 12 },
+            titleTextStyle: { color: '#4CAF50', fontSize: 14, bold: true },
           },
           vAxis: {
-            title: 'Commits'
-          }
+            title: 'Commits',
+            textStyle: { color: '#4CAF50', fontSize: 12 },
+            titleTextStyle: { color: '#4CAF50', fontSize: 14, bold: true },
+          },
+          backgroundColor: '#f9f9f9',
+          colors: ['#4CAF50'],
+          animation: {
+            startup: true,
+            easing: 'out',
+            duration: 1000,
+          },
+          legend: { position: 'none' },
         };
 
+        // Créer le graphique en barres
         var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
         chart.draw(data, options);
       }
