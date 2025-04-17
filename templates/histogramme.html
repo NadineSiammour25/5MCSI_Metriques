@@ -1,91 +1,108 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Histogramme - Températures Tawarano</title>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <style>
-      body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f0f8ff;
-        margin: 0;
-        padding: 0;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Histogramme - Températures Tawarano</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f5f5;
+      color: #0a192f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
 
-      header {
-        background-color: #007acc;
-        color: white;
+    .chart-container {
+      background-color: #ffffffdd;
+      border-radius: 12px;
+      padding: 30px 40px;
+      max-width: 900px;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border-top: 6px solid #a0d8ef;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 30px;
+      color: #0a192f;
+      font-weight: 600;
+    }
+
+    #chart_div {
+      width: 100%;
+      height: 500px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .chart-container {
         padding: 20px;
-        text-align: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       }
 
       h2 {
-        margin: 0;
-        font-size: 24px;
-        letter-spacing: 1px;
+        font-size: 22px;
       }
-
-      #chart_div {
-        margin: 40px auto;
-        width: 90%;
-        max-width: 1000px;
-        height: 500px;
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        padding: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h2>Évolution des températures à Tawarano</h2>
-    </header>
+    }
+  </style>
+</head>
+<body>
+  <div class="chart-container">
+    <h2>Évolution des températures à Tawarano</h2>
     <div id="chart_div"></div>
+  </div>
 
-    <script>
-      google.charts.load('current', { packages: ['corechart'] });
-      google.charts.setOnLoadCallback(drawChartWithData);
+  <script>
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(drawChartWithData);
 
-      function drawChartWithData() {
-        fetch('/tawarano/')
-          .then(response => response.json())
-          .then(data => {
-            var dataTable = new google.visualization.DataTable();
-            dataTable.addColumn('string', 'Date');
-            dataTable.addColumn('number', 'Température');
+    function drawChartWithData() {
+      fetch('/tawarano/')
+        .then(response => response.json())
+        .then(data => {
+          var dataTable = new google.visualization.DataTable();
+          dataTable.addColumn('string', 'Date');
+          dataTable.addColumn('number', 'Température');
 
-            data.results.forEach(entry => {
-              var date = new Date(entry.Jour * 1000);
-              dataTable.addRow([date.toLocaleDateString(), entry.temp]);
-            });
+          data.results.forEach(entry => {
+            var date = new Date(entry.Jour * 1000);
+            dataTable.addRow([date.toLocaleDateString(), entry.temp]);
+          });
 
-            var options = {
-              title: "Évolution des températures à Tawarano",
-              titleTextStyle: {
-                color: '#007acc',
-                fontSize: 18
-              },
-              hAxis: { 
-                title: 'Date',
-                textStyle: { color: '#555' }
-              },
-              vAxis: { 
-                title: 'Température (°C)',
-                textStyle: { color: '#555' }
-              },
-              legend: 'none',
-              colors: ['#4285F4'],
-              backgroundColor: '#ffffff',
-              chartArea: { width: '80%', height: '70%' }
-            };
+          var options = {
+            title: "Évolution des températures à Tawarano",
+            titleTextStyle: {
+              color: '#007acc',
+              fontSize: 18
+            },
+            hAxis: { 
+              title: 'Date',
+              textStyle: { color: '#555' }
+            },
+            vAxis: { 
+              title: 'Température (°C)',
+              textStyle: { color: '#555' }
+            },
+            legend: 'none',
+            colors: ['#4285F4'],
+            backgroundColor: '#ffffff',
+            chartArea: { width: '80%', height: '70%' }
+          };
 
-            var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-            chart.draw(dataTable, options);
-          })
-          .catch(error => console.error('Erreur lors de la récupération des données:', error));
-      }
-    </script>
-  </body>
+          var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+          chart.draw(dataTable, options);
+        })
+        .catch(error => console.error('Erreur lors de la récupération des données:', error));
+    }
+  </script>
+</body>
 </html>
