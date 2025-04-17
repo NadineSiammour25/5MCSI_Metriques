@@ -10,12 +10,19 @@
 
     function drawChart() {
       fetch("/api/commits/")
+  .then(response => response.json())
+  .then(data => {
+    console.log(data); // 👈 Ajoute cette ligne
+    var dataTable = new google.visualization.DataTable();
+    ...
+
+      fetch("/api/commits/")
         .then(response => response.json())
         .then(data => {
           var dataTable = new google.visualization.DataTable();
           dataTable.addColumn('string', 'Minute');
           dataTable.addColumn('number', 'Commits');
-
+          
           data.forEach(item => {
             dataTable.addRow([item.minute.toString(), item.count]);
           });
