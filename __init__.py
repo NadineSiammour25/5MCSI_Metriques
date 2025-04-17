@@ -36,7 +36,6 @@ def mongraphique():
     return render_template("graphique.html")
 
 
-
 @app.route("/histogramme/")#histogramme
 def monhisto():
   return render_template("histogramme.html")
@@ -50,13 +49,13 @@ def commits():
         response = urlopen(url)
         commits_data = json.loads(response.read().decode('utf-8'))
 
-        # Extraire les minutes des commits
+        # Extraire uniquement les heures et minutes des commits
         minutes = []
         for commit in commits_data:
             try:
                 commit_date = commit['commit']['author']['date']
                 commit_datetime = datetime.strptime(commit_date, '%Y-%m-%dT%H:%M:%SZ')
-                minute = commit_datetime.strftime('%Y-%m-%d %H:%M')  # Extrait l'année, mois, jour, heure et minute
+                minute = commit_datetime.strftime('%H:%M')  # <-- Ici on garde uniquement l'heure et les minutes
                 minutes.append(minute)
             except KeyError as e:
                 print(f"Clé manquante dans le commit: {e}")
@@ -71,8 +70,8 @@ def commits():
         return render_template('commits.html', data=data)
     
     except Exception as e:
-        # En cas d'erreur réseau ou autre exception
         return jsonify({'error': f'Erreur lors de la récupération des données de l\'API GitHub : {str(e)}'}), 502
+
 
 
 
