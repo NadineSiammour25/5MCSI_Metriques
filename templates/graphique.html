@@ -1,94 +1,40 @@
-<!DOCTYPE html>
-<html lang="fr">
+<html>
   <head>
     <meta charset="UTF-8" />
-    <title>Métrique - Température</title>
+    <title>Metrique</title>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <style>
-      body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f0f8ff;
-        margin: 0;
-        padding: 0;
-      }
-
-      header {
-        background-color: #007acc;
-        color: white;
-        padding: 20px;
-        text-align: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      }
-
-      h2 {
-        margin: 0;
-        font-size: 24px;
-        letter-spacing: 1px;
-      }
-
-      #chart_div {
-        margin: 40px auto;
-        width: 90%;
-        max-width: 1000px;
-        height: 500px;
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        padding: 20px;
-      }
-    </style>
   </head>
   <body>
-    <header>
-      <h2>Évolution des températures - Ville de Tawarano</h2>
-    </header>
     <div id="chart_div"></div>
-
     <script>
       google.charts.load('current', { packages: ['corechart'] });
       google.charts.setOnLoadCallback(drawBackgroundColor);
-
-      function drawBackgroundColor() {
-        function drawChart(data) {
-          var dataTable = new google.visualization.DataTable();
-          dataTable.addColumn('string', 'Date');
-          dataTable.addColumn('number', 'Température (°C)');
-
-          data.results.forEach(entry => {
-            var date = new Date(entry.Jour * 1000);
-            dataTable.addRow([date.toLocaleDateString(), entry.temp]);
-          });
-
-          var options = {
-            title: 'Températures relevées (°C)',
-            titleTextStyle: {
-              color: '#007acc',
-              fontSize: 18
-            },
-            curveType: 'function',
-            legend: { position: 'bottom' },
-            backgroundColor: '#ffffff',
-            colors: ['#00aaff'],
-            hAxis: {
-              textStyle: { color: '#555' },
-              title: 'Date'
-            },
-            vAxis: {
-              textStyle: { color: '#555' },
-              title: 'Température (°C)'
-            }
-          };
-
-          var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-          chart.draw(dataTable, options);
-        }
-
-        fetch('/tawarano/')
-          .then(response => response.json())
-          .then(data => {
-            drawChart(data);
-          });
-      }
+     function drawBackgroundColor() {
+    function drawChart(data) {
+    // Convertir les données récupérées en un tableau utilisable par Google Charts
+    var dataTable = new google.visualization.DataTable();
+    dataTable.addColumn('string', 'Date');
+    dataTable.addColumn('number', 'Valeur');
+    data.results.forEach(entry => {
+      var date = new Date(entry.Jour * 1000);
+      dataTable.addRow([date.toLocaleDateString(), entry.temp]);
+    });
+    // Configurer les options du graphique en ligne
+    var options = {
+      title: 'Évolution des températures de la ville de Tawarano',
+      curveType: 'function',
+      legend: { position: 'bottom' }
+    };
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+    chart.draw(dataTable, options);
+  }
+  // Récupération de données depuis notre API /tawarano/
+  fetch('/tawarano/')
+    .then(response => response.json())
+    .then(data => {
+      drawChart(data);
+    })
+}
     </script>
   </body>
 </html>
