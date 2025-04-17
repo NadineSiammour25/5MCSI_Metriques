@@ -41,40 +41,38 @@ def mongraphique():
 def monhisto():
   return render_template("histogramme.html")
 
-
 @app.route('/commits/')
 def commits():
     url = 'https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits'
+    
     try:
-        response = requests.get(url, timeout=10)  # Timeout de 10 secondes pour éviter de rester bloqué
-        # Vérifiez si l'API répond correctement
-        if response.status_code != 200:
-            return jsonify({'error': f'Erreur lors de la récupération des commits. Status Code: {response.status_code}'}), 502
-    except requests.exceptions.RequestException as e:
-        # En cas d'erreur réseau (timeout, problème de connexion, etc.)
-        return jsonify({'error': f'Erreur de connexion à l\'API: {str(e)}'}), 502
+        # Effectuer la requête à l'API GitHub
+        response = urlopen(url)
+        commits_data = json.loads(response.read().decode('utf-8'))
 
-    commits_data = response.json()
+        # Extraire les minutes des commits
+        minutes = []
+        for commit in commits_data:
+            try:
+                commit_date = commit['commit']['author']['date']
+                commit_datetime = datetime.strptime(commit_date, '%Y-%m-%dT%H:%M:%SZ')
+                minute = commit_datetime.strftime('%Y-%m-%d %H:%M')  # Extrait l'année, mois, jour, heure et minute
+                minutes.append(minute)
+            except KeyError as e:
+                print(f"Clé manquante dans le commit: {e}")
+                continue  # Ignorer les commits problématiques
 
-    # Extraire les minutes des commits
-    minutes = []
-    for commit in commits_data:
-        try:
-            commit_date = commit['commit']['author']['date']
-            commit_datetime = datetime.strptime(commit_date, '%Y-%m-%dT%H:%M:%SZ')
-            minute = commit_datetime.strftime('%Y-%m-%d %H:%M')  # Extrait l'année, mois, jour, heure et minute
-            minutes.append(minute)
-        except KeyError as e:
-            print(f"Clé manquante dans le commit: {e}")
-            continue  # Ignorer les commits problématiques
+        # Compter les commits par minute
+        commit_counts = Counter(minutes)
 
-    # Compter les commits par minute
-    commit_counts = Counter(minutes)
+        # Organiser les données pour le graphique
+        data = [[minute, count] for minute, count in commit_counts.items()]
 
-    # Organiser les données pour le graphique
-    data = [[minute, count] for minute, count in commit_counts.items()]
-
-    return render_template('commits.html', data=data)
+        return render_template('commits.html', data=data)
+    
+    except Exception as e:
+        # En cas d'erreur réseau ou autre exception
+        return jsonify({'error': f'Erreur lors de la récupération des données de l\'API GitHub : {str(e)}'}), 502
 
 
 
