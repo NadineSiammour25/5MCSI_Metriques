@@ -1,108 +1,53 @@
 <!DOCTYPE html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Graphique des Commits</title>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f7f6;
-        color: #333;
-      }
-      header {
-        background-color: #4CAF50;
-        color: white;
-        padding: 15px;
-        text-align: center;
-      }
-      .container {
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      }
-      h2 {
-        font-size: 24px;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-      #chart_div {
-        width: 100%;
-        height: 500px;
-        margin-top: 20px;
-      }
-      footer {
-        background-color: #333;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        margin-top: 40px;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>Suivi de l'Activité des Commits</h1>
-    </header>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Commits par minute</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>Nombre de commits par minute (HH:MM)</h2>
+    <canvas id="commitChart" width="800" height="400"></canvas>
 
-    <div class="container">
-      <h2>Graphique des Commits par Minute</h2>
-      <div id="chart_div"></div>
-    </div>
+    <script>
+        // Données transmises par Flask
+        const dataFromServer = {{ data|tojson }};
+        
+        const labels = dataFromServer.map(item => item[0]); // HH:MM
+        const values = dataFromServer.map(item => item[1]); // nombre de commits
 
-    <footer>
-      <p>Projet GitHub - Analyse de l'activité des commits</p>
-    </footer>
-
-    <script type="text/javascript">
-      google.charts.load('current', { packages: ['corechart', 'bar'] });
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-        // Préparer les données pour Google Charts
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Minute');
-        data.addColumn('number', 'Nombre de Commits');
-
-        // Insérer les données passées depuis Flask dans le graphique
-        {% for row in data %}
-          data.addRow(['{{ row[0] }}', {{ row[1] }}]);
-        {% endfor %}
-
-        // Configurer le graphique avec plus d'options
-        var options = {
-          title: 'Nombre de Commits par Minute',
-          chartArea: { width: '75%', height: '70%' },
-          hAxis: {
-            title: 'Minute',
-            minValue: 0,
-            textStyle: { color: '#4CAF50', fontSize: 12 },
-            titleTextStyle: { color: '#4CAF50', fontSize: 14, bold: true },
-          },
-          vAxis: {
-            title: 'Commits',
-            textStyle: { color: '#4CAF50', fontSize: 12 },
-            titleTextStyle: { color: '#4CAF50', fontSize: 14, bold: true },
-          },
-          backgroundColor: '#f9f9f9',
-          colors: ['#4CAF50'],
-          animation: {
-            startup: true,
-            easing: 'out',
-            duration: 1000,
-          },
-          legend: { position: 'none' },
-        };
-
-        // Créer le graphique en barres
-        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
+        const ctx = document.getElementById('commitChart').getContext('2d');
+        const commitChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Commits par minute',
+                    data: values,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 90,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Nombre de commits'
+                        }
+                    }
+                }
+            }
+        });
     </script>
-  </body>
+</body>
 </html>
