@@ -44,38 +44,40 @@ def monhisto():
   return render_template("histogramme.html")
 
 
-# Route pour afficher le graphique des commits
 @app.route('/commits/')
 def commits():
-    # Récupérer les commits depuis l'API GitHub
     url = 'https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits'
-    response = requests.get(url)
+    try:
+        response = requests.get(url, timeout=10)  # Timeout de 10 secondes pour éviter de rester bloqué
+        # Vérifiez si l'API répond correctement
+        if response.status_code != 200:
+            return jsonify({'error': f'Erreur lors de la récupération des commits. Status Code: {response.status_code}'}), 502
+    except requests.exceptions.RequestException as e:
+        # En cas d'erreur réseau (timeout, problème de connexion, etc.)
+        return jsonify({'error': f'Erreur de connexion à l\'API: {str(e)}'}), 502
+
     commits_data = response.json()
 
     # Extraire les minutes des commits
     minutes = []
     for commit in commits_data:
-        commit_date = commit['commit']['author']['date']
-        commit_datetime = datetime.strptime(commit_date, '%Y-%m-%dT%H:%M:%SZ')
-        minute = commit_datetime.strftime('%Y-%m-%d %H:%M')  # Extrait l'année, mois, jour, heure et minute
-        minutes.append(minute)
+        try:
+            commit_date = commit['commit']['author']['date']
+            commit_datetime = datetime.strptime(commit_date, '%Y-%m-%dT%H:%M:%SZ')
+            minute = commit_datetime.strftime('%Y-%m-%d %H:%M')  # Extrait l'année, mois, jour, heure et minute
+            minutes.append(minute)
+        except KeyError as e:
+            print(f"Clé manquante dans le commit: {e}")
+            continue  # Ignorer les commits problématiques
 
     # Compter les commits par minute
     commit_counts = Counter(minutes)
 
     # Organiser les données pour le graphique
-    data = []
-    for minute, count in commit_counts.items():
-        data.append([minute, count])
+    data = [[minute, count] for minute, count in commit_counts.items()]
 
     return render_template('commits.html', data=data)
 
-# Route pour extraire les minutes (optionnel, utilisé pour tester la date)
-@app.route('/extract-minutes/<date_string>')
-def extract_minutes(date_string):
-    date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
-    minutes = date_object.minute
-    return jsonify({'minutes': minutes})
 
 if __name__ == '__main__':
     app.run(debug=True)
