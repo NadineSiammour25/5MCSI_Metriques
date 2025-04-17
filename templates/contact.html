@@ -4,72 +4,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Contact | Votre Entreprise</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background-color: #121212;
-      color: #f4f1ee;
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f5f5;
+      color: #0a192f;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
     }
 
-    .form-container {
-      background-color: #1e1e1e;
-      padding: 50px 40px;
+    .contact-box {
+      background-color: #ffffffdd;
       border-radius: 12px;
+      padding: 50px 40px;
       max-width: 600px;
       width: 100%;
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border-top: 6px solid #a0d8ef;
     }
 
     h2 {
-      font-weight: 500;
-      margin-bottom: 30px;
       text-align: center;
-      color: #f4f1ee;
+      margin-bottom: 30px;
+      color: #0a192f;
+      font-weight: 600;
     }
 
     label {
       display: block;
-      margin-bottom: 6px;
       margin-top: 20px;
       font-weight: 500;
-      color: #d1cfc9;
+      color: #0a192f;
     }
 
     input, textarea {
       width: 100%;
       padding: 12px 15px;
-      background-color: #2b2b2b;
-      color: #f4f1ee;
-      border: 1px solid #3a3a3a;
+      margin-top: 8px;
+      border: 1px solid #cfd8dc;
       border-radius: 8px;
       font-size: 14px;
-      transition: border 0.3s ease;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #b0aaa5;
+      background-color: #f0f8ff;
+      color: #0a192f;
+      transition: border-color 0.3s ease;
     }
 
     input:focus,
     textarea:focus {
       outline: none;
-      border-color: #bfae9f;
+      border-color: #70c1e3;
+      background-color: #e6f4fa;
     }
 
     button {
       margin-top: 30px;
       width: 100%;
-      background-color: #bfae9f;
-      color: #121212;
+      background-color: #70c1e3;
+      color: white;
       padding: 14px;
-      font-weight: bold;
+      font-weight: 600;
       font-size: 15px;
       border: none;
       border-radius: 8px;
@@ -78,25 +75,25 @@
     }
 
     button:hover {
-      background-color: #a99989;
+      background-color: #50accf;
     }
 
     @media (max-width: 600px) {
-      .form-container {
+      .contact-box {
         padding: 30px 20px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>Contactez notre équipe</h2>
+  <div class="contact-box">
+    <h2>Nous contacter</h2>
     <form>
       <label for="nom">Nom</label>
-      <input type="text" id="nom" name="nom" placeholder="Votre nom">
+      <input type="text" id="nom" name="nom" placeholder="Entrez votre nom">
 
       <label for="prenom">Prénom</label>
-      <input type="text" id="prenom" name="prenom" placeholder="Votre prénom">
+      <input type="text" id="prenom" name="prenom" placeholder="Entrez votre prénom">
 
       <label for="message">Message</label>
       <textarea id="message" name="message" rows="5" placeholder="Votre message..."></textarea>
