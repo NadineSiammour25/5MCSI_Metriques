@@ -44,15 +44,15 @@ def mongraphique():
 def monhisto():
   return render_template("histogramme.html")
 
-
 # Configuration de votre fuseau horaire local (par exemple Paris)
 local_tz = pytz.timezone('Europe/Paris')
 
 @app.route('/commits/')
 def commits():
-    # Récupérer les commits depuis l'API GitHub
+    # Récupérer les commits depuis l'API GitHub avec urllib
     url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
-    commits_data = requests.get(url).json()
+    response = urlopen(url)  # Utilisation de urllib pour ouvrir l'URL
+    commits_data = json.loads(response.read())  # Lire et décoder la réponse JSON
     
     # Créer un dictionnaire pour compter les commits par minute
     commits_per_minute = {}
@@ -80,7 +80,6 @@ def commits():
         data.append([minute, count])
     
     return jsonify(data)
-
 
 if __name__ == '__main__':
     app.run(debug=True)
