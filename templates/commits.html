@@ -4,63 +4,16 @@
     <meta charset="UTF-8">
     <title>Graphique des commits par minute</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f6fb;
-            color: #1c1c1e;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 40px 20px;
-        }
-
-        h2 {
-            font-size: 28px;
-            margin-bottom: 30px;
-            color: #1d4e89;
-        }
-
-        .chart-container {
-            width: 100%;
-            max-width: 1000px;
-            background-color: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        canvas {
-            width: 100% !important;
-            height: auto !important;
-        }
-
-        footer {
-            margin-top: 40px;
-            font-size: 14px;
-            color: #888;
-        }
-    </style>
 </head>
 <body>
-    <h2> Graphique des commits par minute</h2>
-
-    <div class="chart-container">
-        <canvas id="commitChart"></canvas>
-    </div>
-
-    <footer>
-        Projet de suivi des commits - © {{ datetime.utcnow().year }}
-    </footer>
+    <h2>Commits par minute </h2>
+    <canvas id="commitChart" width="900" height="400"></canvas>
 
     <script>
         const dataFromServer = {{ data|tojson }};
         
-        const labels = dataFromServer.map(item => item[0]);
-        const values = dataFromServer.map(item => item[1]);
+        const labels = dataFromServer.map(item => item[0]); // Minute : "14:37"
+        const values = dataFromServer.map(item => item[1]); // Nombre de commits
 
         const ctx = document.getElementById('commitChart').getContext('2d');
         const commitChart = new Chart(ctx, {
@@ -70,23 +23,20 @@
                 datasets: [{
                     label: 'Nombre de commits',
                     data: values,
-                    backgroundColor: 'rgba(137, 207, 240, 0.7)',  // Bleu ciel
-                    borderColor: 'rgba(100, 181, 246, 1)',        // Bleu un peu plus foncé
-                    borderWidth: 1.5,
-                    borderRadius: 4
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: { display: false },
-                    title: {
+                    legend: {
                         display: false
                     },
-                    tooltip: {
-                        backgroundColor: '#1d4e89',
-                        titleColor: '#fff',
-                        bodyColor: '#fff'
+                    title: {
+                        display: true,
+                        text: 'Commits réalisés minute par minute'
                     }
                 },
                 scales: {
@@ -94,38 +44,18 @@
                         ticks: {
                             autoSkip: false,
                             maxRotation: 90,
-                            minRotation: 45,
-                            color: '#555'
+                            minRotation: 45
                         },
                         title: {
                             display: true,
-                            text: 'Minute (HH:MM)',
-                            color: '#1d4e89',
-                            font: {
-                                size: 14,
-                                weight: '600'
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(0,0,0,0.05)'
+                            text: 'Minute (HH:MM)'
                         }
                     },
                     y: {
                         beginAtZero: true,
-                        ticks: {
-                            color: '#555'
-                        },
                         title: {
                             display: true,
-                            text: 'Nombre de commits',
-                            color: '#1d4e89',
-                            font: {
-                                size: 14,
-                                weight: '600'
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(0,0,0,0.05)'
+                            text: 'Nombre de commits'
                         }
                     }
                 }
