@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Commits par minute</title>
+    <title>Graphique des commits par minute</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h2>Nombre de commits par minute (HH:MM)</h2>
-    <canvas id="commitChart" width="800" height="400"></canvas>
+    <h2>Commits par minute (HH:MM)</h2>
+    <canvas id="commitChart" width="900" height="400"></canvas>
 
     <script>
-        // Données transmises par Flask
         const dataFromServer = {{ data|tojson }};
         
-        const labels = dataFromServer.map(item => item[0]); // HH:MM
-        const values = dataFromServer.map(item => item[1]); // nombre de commits
+        const labels = dataFromServer.map(item => item[0]); // Minute : "14:37"
+        const values = dataFromServer.map(item => item[1]); // Nombre de commits
 
         const ctx = document.getElementById('commitChart').getContext('2d');
         const commitChart = new Chart(ctx, {
@@ -22,20 +21,34 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Commits par minute',
+                    label: 'Nombre de commits',
                     data: values,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 1
                 }]
             },
             options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Commits réalisés minute par minute'
+                    }
+                },
                 scales: {
                     x: {
                         ticks: {
                             autoSkip: false,
                             maxRotation: 90,
                             minRotation: 45
+                        },
+                        title: {
+                            display: true,
+                            text: 'Minute (HH:MM)'
                         }
                     },
                     y: {
